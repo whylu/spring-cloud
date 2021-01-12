@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="ming.test.cloud.walletservice.mapper.WalletMapper">
+
+    <insert id="insertWalletChangeLog"  useGeneratedKeys="true" keyProperty="id" >
+        INSERT INTO wallet_change_log (wallet_id, "action", amount, status, request_id, submit_time)
+        VALUES (
+            #{log.walletId},
+            #{log.action},
+            #{log.amount},
+            #{log.status},
+            #{log.requestId},
+            (extract(epoch from now() at time zone 'UTC')*1000)::bigint
+        )
+    </insert>
+
+
+    <update id="freeze">
+        UPDATE wallet SET amount = amount - #{amount}, frozen = frozen + #{amount}
+        WHERE id=#{id}  AND amount >= #{amount}
+    </update>
+
+    <update id="updateWalletChangeLog">
+        UPDATE wallet_change_log SET status = #{status},
+            last_update_time = (extract(epoch from now() at time zone 'UTC')*1000)::bigint
+        WHERE id=#{logId}
+    </update>
+
+</mapper>
