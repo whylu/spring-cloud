@@ -1,10 +1,10 @@
-package ming.test.cloud.walletservice;
+package ming.test.cloud.mybatis.test;
 
 import ming.test.cloud.walletservice.mapper.AbstTestMapper;
-import ming.test.cloud.walletservice.model.Status;
-import ming.test.cloud.walletservice.model.Wallet;
 import ming.test.cloud.walletservice.mapper.WalletMapper;
 import ming.test.cloud.walletservice.model.Action;
+import ming.test.cloud.walletservice.model.Status;
+import ming.test.cloud.walletservice.model.Wallet;
 import ming.test.cloud.walletservice.model.WalletChangeLog;
 import org.junit.jupiter.api.Test;
 
@@ -13,10 +13,13 @@ import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+/**
+ * pure mybatis test
+ */
 class WalletMapperTest extends AbstTestMapper<WalletMapper> {
 
     public WalletMapperTest() {
-        super(WalletMapper.class, "/db-init/init.sql");
+        super(WalletMapper.class, "/db/h2/init-embedded.sql");
     }
 
     @Test
@@ -24,16 +27,12 @@ class WalletMapperTest extends AbstTestMapper<WalletMapper> {
         WalletChangeLog log = new WalletChangeLog();
         log.setWalletId(123L);
         log.setAction(Action.FREEZE);
-        log.setStatus(Status.PROCESSING);
+        log.setStatus(Status.FAILED);
         log.setAmount(BigDecimal.ONE);
         log.setRequestId("my-request-id-0003123");
         long result = getMapper().insertWalletChangeLog(log);
-        System.out.println(result);
-        System.out.println(log.getId());
-    }
-
-    @Test
-    void selectByUser() {
+        assertThat(result).isOne();
+        assertThat(log.getId()).isNotZero();
     }
 
     @Test

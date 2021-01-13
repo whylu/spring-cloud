@@ -1,10 +1,14 @@
 package ming.test.cloud.walletservice;
 
-import ming.test.cloud.walletservice.model.Wallet;
+import ming.test.cloud.walletservice.dto.Response;
 import ming.test.cloud.walletservice.dto.FreezeWallet;
+import ming.test.cloud.walletservice.dto.WalletChangeResult;
+import ming.test.cloud.walletservice.model.ErrorCode;
 import ming.test.cloud.walletservice.model.Status;
+import ming.test.cloud.walletservice.model.Wallet;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -27,14 +31,12 @@ public class WalletController {
     }
 
     @PostMapping(value = "/freeze", produces = MediaType.APPLICATION_JSON_VALUE)
-    public Status freeze(@RequestBody FreezeWallet freezeWallet) {
+    public ResponseEntity<Response> freeze(@RequestBody FreezeWallet freezeWallet) {
         Wallet wallet = walletService.getWallet(freezeWallet.getUsername(), freezeWallet.getCurrency());
         if(wallet==null) {
-            return Status.FAILED;
-//            return error ;
+            return ResponseEntity.badRequest().body(Response.error(ErrorCode.WALLET_NOT_FOUND));
         }
-        Status status = walletService.freeze(wallet, freezeWallet);
-
-        return status;
+        WalletChangeResult result = walletService.freeze(wallet, freezeWallet);
+        return Response.ok(result);
     }
 }

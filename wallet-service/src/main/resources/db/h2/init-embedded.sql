@@ -1,3 +1,6 @@
+DROP TABLE IF EXISTS wallet;
+DROP TABLE IF EXISTS wallet_change_log;
+
 CREATE TABLE IF NOT EXISTS wallet (
 	id serial PRIMARY KEY,
 	username varchar(32) NOT NULL,
@@ -19,17 +22,14 @@ CREATE TABLE IF NOT EXISTS wallet_change_log (
 	last_update_time bigint
 );
 
-INSERT INTO public.wallet (username,currency,amount)	VALUES ('ming01','USD',20000.0) ON CONFLICT DO NOTHING;
 
 
-
+INSERT INTO public.wallet (username,currency,amount)	VALUES ('ming01','USD',20000.0);
 
 INSERT INTO wallet_change_log (wallet_id, "action", amount, status, request_id, submit_time)
-VALUES (
-    1234,
-    1,
-    1234.567,
-    'COMPLETED',
-    'teadsa-1234',
-    (extract(epoch from now() at time zone 'UTC')*1000)::bigint
-);
+VALUES (1234,
+        1,
+        1234.567,
+        'COMPLETED',
+        'teadsa-1234',
+        (extract(epoch from now() at time zone 'UTC')*1000)::bigint);

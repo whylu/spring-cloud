@@ -1,10 +1,8 @@
 package ming.test.cloud.walletservice.mapper;
 
-import ming.test.cloud.walletservice.mapper.typehandler.AutoEnumTypeHandler;
 import org.apache.ibatis.session.SqlSession;
 import org.apache.ibatis.session.SqlSessionFactory;
 import org.apache.ibatis.session.SqlSessionFactoryBuilder;
-import org.apache.ibatis.type.TypeHandlerRegistry;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 
@@ -42,9 +40,6 @@ public abstract class AbstTestMapper<T> {
 
         InputStream inputStream = AbstTestMapper.class.getResourceAsStream("/mybatis-config-junit.xml");
         sqlSessionFactory = new SqlSessionFactoryBuilder().build(inputStream, properties);
-
-        TypeHandlerRegistry typeHandlerRegistry = sqlSessionFactory.getConfiguration().getTypeHandlerRegistry();
-        typeHandlerRegistry.setDefaultEnumTypeHandler(AutoEnumTypeHandler.class);
     }
 
     @BeforeEach

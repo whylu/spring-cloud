@@ -1,10 +1,11 @@
 package ming.test.cloud.walletservice;
 
-import ming.test.cloud.walletservice.model.Wallet;
 import ming.test.cloud.walletservice.dto.FreezeWallet;
+import ming.test.cloud.walletservice.dto.WalletChangeResult;
 import ming.test.cloud.walletservice.mapper.WalletMapper;
 import ming.test.cloud.walletservice.model.Action;
 import ming.test.cloud.walletservice.model.Status;
+import ming.test.cloud.walletservice.model.Wallet;
 import ming.test.cloud.walletservice.model.WalletChangeLog;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -35,39 +36,31 @@ public class WalletServiceImpl implements WalletService {
     }
 
 
-    @Transactional
+    @Transactional(propagation = Propagation.SUPPORTS)
     @Override
-    public Status freeze(Wallet wallet, FreezeWallet freezeWallet) {
-        logger.debug("freeze...");
+    public WalletChangeResult freeze(Wallet wallet, FreezeWallet freezeWallet) {
         WalletChangeLog log = new WalletChangeLog();
         log.setWalletId(wallet.getId());
         log.setAction(Action.FREEZE);
-        log.setStatus(Status.PROCESSING);
+        log.setStatus(Status.FAILED);
         log.setAmount(freezeWallet.getAmount());
         log.setRequestId(freezeWallet.getRequestId());
-        walletMapper.insertWalletChangeLog(log);
-        if(log.getId()==null) {
-            return Status.FAILED;
-        }
 
+        WalletChangeResult result = new WalletChangeResult();
+        result.setRequestId(freezeWallet.getRequestId());
+        result.setWalletId(wallet.getId());
         try {
-            return doFreeze(wallet.getId(), freezeWallet, log.getId());
+            Status status = walletMapper.doFreezeAndLog(wallet.getId(), freezeWallet, log);
+            result.setStatus(status);
         } catch (Exception e) {
-            walletMapper.updateWalletChangeLog(log.getId(), Status.FAILED);
-            return Status.FAILED;
+            logger.debug("[MN:freeze] failed");
+            walletMapper.insertWalletChangeLog(log);
+            result.setStatus(Status.FAILED);
         }
+        result.setLogId(log.getId());
+        return result;
     }
 
 
-    @Transactional(propagation = Propagation.REQUIRES_NEW, rollbackFor = RuntimeException.class)
-    public Status doFreeze(Long walletId, FreezeWallet freezeWallet, Long logId) {
-        int result = walletMapper.freeze(walletId, freezeWallet.getAmount());
-        Status status = (result==1)? Status.COMPLETED: Status.FAILED;
-        if(status==Status.COMPLETED) {
-            throw new RuntimeException("asdadsa");
-        }
-        walletMapper.updateWalletChangeLog(logId, status);
-        return status;
-    }
 
 }
