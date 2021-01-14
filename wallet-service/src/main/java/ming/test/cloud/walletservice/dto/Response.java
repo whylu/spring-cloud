@@ -1,14 +1,12 @@
 package ming.test.cloud.walletservice.dto;
 
-import com.fasterxml.jackson.annotation.JsonInclude;
 import ming.test.cloud.walletservice.model.ErrorCode;
 import org.springframework.http.ResponseEntity;
 
-@JsonInclude(JsonInclude.Include.NON_NULL)
 public class Response {
     private Object data;
     private String message;
-    private Integer errorCode;
+    private int errorCode;
 
     public static Response error(ErrorCode errorCode) {
         Response errorResponse = new Response();
@@ -31,7 +29,7 @@ public class Response {
         return message;
     }
 
-    public Integer getErrorCode() {
+    public int getErrorCode() {
         return errorCode;
     }
 }
