@@ -31,7 +31,7 @@ public class WalletController {
     }
 
     @PostMapping(value = "/freeze", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<Response> freeze(@RequestBody FreezeWallet freezeWallet) {
+    public ResponseEntity<Response<WalletChangeResult>> freeze(@RequestBody FreezeWallet freezeWallet) {
         Wallet wallet = walletService.getWallet(freezeWallet.getUsername(), freezeWallet.getCurrency());
         if(wallet==null) {
             return ResponseEntity.badRequest().body(Response.error(ErrorCode.WALLET_NOT_FOUND));

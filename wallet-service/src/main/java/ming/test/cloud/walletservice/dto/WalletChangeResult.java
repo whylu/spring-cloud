@@ -7,6 +7,7 @@ public class WalletChangeResult {
     private Long logId;
     private String requestId;
     private Status status;
+    private String serverOnlyField;
 
     public Long getWalletId() {
         return walletId;
@@ -38,5 +39,13 @@ public class WalletChangeResult {
 
     public void setStatus(Status status) {
         this.status = status;
+    }
+
+    public String getServerOnlyField() {
+        return serverOnlyField;
+    }
+
+    public void setServerOnlyField(String serverOnlyField) {
+        this.serverOnlyField = serverOnlyField;
     }
 }

@@ -3,8 +3,8 @@ package ming.test.cloud.walletservice.dto;
 import ming.test.cloud.walletservice.model.ErrorCode;
 import org.springframework.http.ResponseEntity;
 
-public class Response {
-    private Object data;
+public class Response<D> {
+    private D data;
     private String message;
     private int errorCode;
 
@@ -15,13 +15,13 @@ public class Response {
         return errorResponse;
     }
 
-    public static ResponseEntity<Response> ok(Object data) {
+    public static <D> ResponseEntity<Response<D>> ok(D data) {
         Response response = new Response();
         response.data = data;
         return ResponseEntity.ok().body(response);
     }
 
-    public Object getData() {
+    public D getData() {
         return data;
     }
 
