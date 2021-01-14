@@ -53,7 +53,7 @@ public class WalletServiceImpl implements WalletService {
             Status status = walletMapper.doFreezeAndLog(wallet.getId(), freezeWallet, log);
             result.setStatus(status);
         } catch (Exception e) {
-            logger.debug("[MN:freeze] failed");
+            logger.debug("[MN:freeze] failed", e);
             walletMapper.insertWalletChangeLog(log);
             result.setStatus(Status.FAILED);
         }

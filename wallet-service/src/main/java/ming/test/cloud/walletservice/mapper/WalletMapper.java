@@ -37,8 +37,6 @@ public interface WalletMapper {
     default Status doFreezeAndLog(Long walletId, FreezeWallet freezeWallet, WalletChangeLog log) {
         int result = freeze(walletId, freezeWallet.getAmount());
         Status status = (result==1)? Status.COMPLETED: Status.FAILED;
-        if(status==Status.COMPLETED)
-            throw new RuntimeException("adadad");
         log.setStatus(status);
         insertWalletChangeLog(log);
         return status;
